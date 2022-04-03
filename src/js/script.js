@@ -240,8 +240,9 @@ function showCurrentRowLoading() {
 }
 
 function getAnswer() {
-  //   const wordBank = ["SNOUT", "LOWLY", "CYNIC", "STRESS", "SHOOK", "FLEET"];
-  const wordBank = ["SNOUT", "LOWLY", "CYNIC"];
+  //prettier-ignore
+  const wordBank = ["SNOUT", "LOWLY", "CYNIC", "STRESS", "SHOOK", "FLEET", "TEETH"];
+  //   const wordBank = ["SNOUT", "LOWLY", "CYNIC"];
 
   const pastAnswers = getPastAnswers();
   if (pastAnswers.length === 0) return getRandom(wordBank);
