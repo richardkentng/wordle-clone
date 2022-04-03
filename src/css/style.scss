@@ -171,7 +171,7 @@ button {
     .wordle {
       font-size: 1em;
     }
-    .goal {
+    .objective {
       margin: 2em auto;
       .emphasize {
         display: block;
@@ -179,14 +179,28 @@ button {
       }
     }
 
-    .text-green {
-      color: green;
-    }
-    .text-yellow {
-      color: yellow;
-    }
-    .text-gray {
-      color: gray;
+    .explain-colors-cont {
+      & > div {
+        display: flex;
+        align-items: center;
+
+        .color-word {
+          font-size: 1.2em;
+          padding: 0.2em;
+          border-radius: 0.2em;
+          margin-right: 0.8em;
+          &.green {
+            color: green;
+          }
+          &.yellow {
+            color: yellow;
+          }
+          &.gray {
+            color: gray;
+            font-size: 1.5em;
+          }
+        }
+      }
     }
   }
   .close-btn {

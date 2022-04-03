@@ -161,21 +161,32 @@ button:active {
 .guide .text .wordle {
   font-size: 1em;
 }
-.guide .text .goal {
+.guide .text .objective {
   margin: 2em auto;
 }
-.guide .text .goal .emphasize {
+.guide .text .objective .emphasize {
   display: block;
   font-size: 2em;
 }
-.guide .text .text-green {
+.guide .text .explain-colors-cont > div {
+  display: flex;
+  align-items: center;
+}
+.guide .text .explain-colors-cont > div .color-word {
+  font-size: 1.2em;
+  padding: 0.2em;
+  border-radius: 0.2em;
+  margin-right: 0.8em;
+}
+.guide .text .explain-colors-cont > div .color-word.green {
   color: green;
 }
-.guide .text .text-yellow {
+.guide .text .explain-colors-cont > div .color-word.yellow {
   color: yellow;
 }
-.guide .text .text-gray {
+.guide .text .explain-colors-cont > div .color-word.gray {
   color: gray;
+  font-size: 1.5em;
 }
 .guide .close-btn {
   position: absolute;
