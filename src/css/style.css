@@ -58,6 +58,7 @@ button:active {
 .keyboard {
   width: fit-content;
   max-width: 100%;
+  touch-action: manipulation;
 }
 .keyboard .row {
   display: flex;

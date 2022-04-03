@@ -64,6 +64,7 @@ button {
 .keyboard {
   width: fit-content;
   max-width: 100%;
+  touch-action: manipulation; //prevent double tap to zoom for mobile devices
   .row {
     display: flex;
     justify-content: center;
