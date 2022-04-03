@@ -1,0 +1,189 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@500;700&display=swap");
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Work Sans", sans-serif;
+  color: white;
+  background-color: black;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+button:hover {
+  filter: brightness(0.9);
+}
+button:active {
+  filter: brightness(0.7);
+  transform: scale(1.1);
+}
+
+.content {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: inherit;
+  max-height: 750px;
+}
+
+.heading-grid-cont h1 {
+  font-family: "Poppins", sans-serif;
+  color: #ccc;
+  font-size: 2rem;
+  text-align: center;
+}
+.heading-grid-cont .grid {
+  width: fit-content;
+}
+.heading-grid-cont .grid .row {
+  display: flex;
+}
+.heading-grid-cont .grid .tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  font-size: 35px;
+  border: solid #555 1px;
+  margin: 3px;
+}
+
+.keyboard {
+  width: fit-content;
+  max-width: 100%;
+}
+.keyboard .row {
+  display: flex;
+  justify-content: center;
+}
+.keyboard .row .key {
+  color: white;
+  background-color: gray;
+  transition: background-color 0.7s;
+  height: 50px;
+  width: 35px;
+  border: 0;
+  border-radius: 5px;
+  margin: 0.2em;
+}
+.keyboard .row .key[data-value=Backspace] {
+  width: 55px;
+  font-size: 1.4em;
+}
+.keyboard .row .key[data-value=Enter] {
+  width: 55px;
+}
+
+.tile.bg-color-gray {
+  background-color: #666 !important;
+}
+
+.key.bg-color-gray {
+  background-color: #333 !important;
+}
+
+.bg-color-yellow {
+  background-color: #b59f3b !important;
+}
+
+.bg-color-green {
+  background-color: #538d4e !important;
+}
+
+.my-toast {
+  position: absolute;
+  z-index: 1;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+}
+.my-toast .arrow-icon {
+  transform: translateX(12px);
+}
+.my-toast .box {
+  transform: translateY(-9px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 5px 10px;
+  border: solid black 1px;
+  border-radius: 5px;
+  box-shadow: 4px 4px 5px rgba(0, 0, 0, 0.2);
+}
+.my-toast .box .toast-icon {
+  font-size: x-large;
+  margin-right: 10px;
+  color: orange;
+}
+.my-toast .box .text {
+  color: black;
+  font-size: 14px;
+}
+
+.loading {
+  width: 50px;
+  opacity: 0.5;
+  position: absolute;
+}
+
+.d-inline-block {
+  display: inline-block;
+}
+
+.hide {
+  display: none;
+}
+
+.guide {
+  position: absolute;
+  background-color: #222;
+  width: 100%;
+  height: 500px;
+  max-width: 500px;
+  max-height: 100%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.9;
+  padding: 2em;
+  border-radius: 0.5em;
+  border: solid #333 1px;
+}
+.guide .text .wordle {
+  font-size: 1em;
+}
+.guide .text .goal {
+  margin: 2em auto;
+}
+.guide .text .goal .emphasize {
+  display: block;
+  font-size: 2em;
+}
+.guide .text .text-green {
+  color: green;
+}
+.guide .text .text-yellow {
+  color: yellow;
+}
+.guide .text .text-gray {
+  color: gray;
+}
+.guide .close-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: #444;
+  padding: 0.3em;
+  border: 0;
+  border-radius: 0.1em;
+}
+
+/*# sourceMappingURL=style.css.map */

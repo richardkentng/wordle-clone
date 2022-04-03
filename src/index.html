@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./css/style.css"></link>
+	<!-- bootstrap icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+	<script src="./js/script.js" defer></script>
+	<title>Wordle Clone</title>
+</head>
+<body>
+	<div class="content">
+		<section class="heading-grid-cont">
+			<h1>Wordle Clone</h1>
+			<div class="grid"></div>
+		</section>
+		<div class="keyboard"></div>
+	</div>
+
+	<div class="guide">
+		<div class="text">
+			<p>This is my clone of the popular game Wordle.</p>
+			<div class="goal">
+				<p>The goal is to <span class="emphasize">guess the 5-letter word!</span></p>
+			</div >
+			
+			<p>You have 6 chances to guess the word.</p>
+	
+			<p>After you submit a word by pressing ENTER,</p>
+			<p>The tiles will change to one of three colors:</p>
+			<p><span class="text-gray">GRAY:</span> The letter is NOT in the word!</p>
+			<p><span class="text-yellow">YELLOW:</span> The letter is in the word, but NOT in that spot!</p>
+			<p><span class="text-green">GREEN:</span> The letter is in the exact same spot as in the answer!</p>
+		</div>
+		<button class="close-btn"><i class="bi-x-lg"></i></button>
+	</div>
+</body>
+</html>
