@@ -13,29 +13,50 @@
 <body>
 	<div class="content">
 		<section class="heading-grid-cont">
-			<h1>Wordle Clone</h1>
+				<h1 class="heading">Wordle Clone <i class="bi-question-square question-icon"></i></h1>
 			<div class="grid"></div>
 		</section>
 		<div class="keyboard"></div>
 	</div>
 
-	<div class="guide">
-		<div class="text">
-			<p>This is my clone of the popular game Wordle.</p>
-			<div class="objective">
-				<p>Your objective is to... <span class="emphasize">guess the 5-letter word!</span></p>
-			</div >
+	<div class="guide-cont">
+		<div class="guide">
+			<div class="content">
 
-			<p>You have 6 chances to guess the word.</p>
-	
-			<p>After you submit a word by pressing ENTER, <br>The tiles will change to one of three colors:</p>
-			<div class="explain-colors-cont">
-				<div><span class="color-word gray">GRAY</span><p>The letter is NOT in the word!</p></div>
-				<div><span class="color-word yellow">YELLOW</span><p> The letter is in the word, but NOT in that spot!</p></div>
-				<div><span class="color-word green">GREEN</span><p> The letter is in the exact same spot as in the answer!</p></div>
+				<div class="text">
+					<p>Welcome to my clone of Wordle!</p>
+					<div class="objective">
+						<p>Your objective is to... <span class="emphasize">guess the 5-letter word!</span></p>
+					</div >
+		
+					<p>You have 6 chances to guess the word.</p>
+			
+					<p>Each time you enter a word, <br>the tiles will change to one of three colors:</p>
+					<div class="explain-colors-cont">
+						<div><span class="color-word gray">GRAY</span><p>The letter is not in the word!</p></div>
+						<div><span class="color-word yellow">YELLOW</span><p> The letter is in the word, but not in that spot!</p></div>
+						<div><span class="color-word green">GREEN</span><p> The letter is in the word and in the correct spot!</p></div>
+					</div>
+				</div>
+
+				<div class="okay-btn-cont"><button class="okay-btn">Okay!</button></div>
+				<button class="close-btn"><i class="bi-x-lg"></i></button>
 			</div>
+			<footer>
+				<div class="links">
+					<a
+					href="https://www.linkedin.com/in/richard-kent-ng/"
+					target="_blank"
+					>my linkedin
+				  </a>
+					<a
+					href="https://github.com/richardkentng/wordle-clone"
+					target="_blank"
+					>view code
+				  </a>
+				</div>
+			</footer>
 		</div>
-		<button class="close-btn"><i class="bi-x-lg"></i></button>
 	</div>
 </body>
 </html>
