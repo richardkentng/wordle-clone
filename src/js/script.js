@@ -2,6 +2,7 @@ console.log("sanity check");
 
 generateWordGridHTML();
 generateOnScreenKeyboard();
+addEventListenersToGuideCont(); //listens for clicks to close '.guide-cont' window
 
 let answer = getAnswer();
 console.log(answer);
@@ -13,11 +14,6 @@ let rowIndex = 0; //keep track of the row whose characters are being decided
 const keyboard = document.body.querySelector(".keyboard");
 let tiles = getTilesOfRow(rowIndex);
 
-const guide = document.body.querySelector(".guide");
-const closeGuideBtn = guide.querySelector(".close-btn");
-closeGuideBtn.onclick = function () {
-  guide.classList.add("hide");
-};
 document.addEventListener("keyup", handleKeyboardsInput);
 
 //===================================================/
@@ -362,4 +358,24 @@ function generateOnScreenKeyboard() {
   //capitalize enter key's textcontent
   const enterKey = keyboard.querySelector("[data-value='Enter']");
   enterKey.textContent = enterKey.textContent.toUpperCase();
+}
+
+function addEventListenersToGuideCont() {
+  const guideCont = document.body.querySelector(".guide-cont");
+  //click 'x' or 'okay' to close guide:
+  const guideContCloseBtns = [
+    guideCont.querySelector(".close-btn"),
+    guideCont.querySelector(".okay-btn"),
+  ];
+  const questionIcon = document.body.querySelector(".question-icon");
+  guideContCloseBtns.forEach(
+    (btn) =>
+      (btn.onclick = () => {
+        guideCont.classList.add("hide");
+      })
+  );
+  //click '?' to see guide:
+  questionIcon.onclick = () => {
+    guideCont.classList.remove("hide");
+  };
 }
