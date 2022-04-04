@@ -1,5 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Work+Sans:wght@500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap");
 * {
   box-sizing: border-box;
 }
@@ -37,11 +38,23 @@ button {
 }
 
 .heading-grid-cont {
-  h1 {
+  .heading {
     font-family: "Poppins", sans-serif;
     color: #ccc;
     font-size: 2rem;
     text-align: center;
+    .question-icon {
+      margin-left: 10px;
+      color: white;
+      font-size: 1.8rem;
+      display: inline-block; //allows transform: scale() to work
+      &:hover {
+        filter: brightness(0.8);
+      }
+      &:active {
+        transform: scale(1.2);
+      }
+    }
   }
   .grid {
     width: fit-content;
@@ -59,6 +72,13 @@ button {
       margin: 3px;
     }
   }
+}
+
+.loading {
+  //the loading wheel that appears to the right of a row after pressing enter
+  width: 50px;
+  opacity: 0.5;
+  position: absolute;
 }
 
 .keyboard {
@@ -139,77 +159,109 @@ button {
   }
 }
 
-.loading {
-  width: 50px;
-  opacity: 0.5;
+.guide-cont {
   position: absolute;
-}
-
-.d-inline-block {
-  display: inline-block;
-}
-
-.hide {
-  display: none;
-}
-
-.guide {
-  position: absolute;
-  background-color: #222;
   width: 100%;
-  height: 500px;
-  max-width: 500px;
-  max-height: 100%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.9;
-  padding: 2em;
-  border-radius: 0.5em;
-  border: solid #333 1px;
-  .text {
-    .wordle {
-      font-size: 1em;
-    }
-    .objective {
-      margin: 2em auto;
-      .emphasize {
-        display: block;
-        font-size: 2em;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.5);
+  .guide {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #222;
+    width: 100%;
+    height: fit-content;
+    max-width: 500px;
+    max-height: 100%;
+    font-family: "Noto Sans", sans-serif;
+    border-radius: 0.5em;
+    border: solid #444 3px;
+    z-index: 1;
+    .content {
+      padding: 1.9em;
+
+      .text {
+        .objective {
+          margin: 2em auto;
+          .emphasize {
+            display: block;
+            font-size: 1.75em;
+          }
+        }
+
+        .explain-colors-cont {
+          & > div {
+            display: flex;
+            align-items: center;
+
+            .color-word {
+              font-size: 1.2em;
+              padding: 0.2em;
+              border-radius: 0.2em;
+              margin-right: 0.8em;
+              &.green {
+                color: rgb(0, 160, 0);
+              }
+              &.yellow {
+                color: rgb(177, 177, 0);
+              }
+              &.gray {
+                color: gray;
+                font-size: 1.3em;
+              }
+            }
+          }
+        }
+      }
+      .okay-btn-cont {
+        text-align: center;
+        margin-top: 0.7em;
+        .okay-btn {
+          font-size: 1em;
+          padding: 0.5em 1em;
+          margin: 0 auto;
+          border: 0;
+          border-radius: 0.2em;
+          background-color: #ccc;
+        }
+      }
+      .close-btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 1.5em;
+        color: white;
+        background-color: inherit;
+        padding: 0.3em;
+        border: 0;
+        border-radius: 0.1em;
       }
     }
-
-    .explain-colors-cont {
-      & > div {
+    footer {
+      background-color: black;
+      .links {
         display: flex;
-        align-items: center;
-
-        .color-word {
-          font-size: 1.2em;
-          padding: 0.2em;
-          border-radius: 0.2em;
-          margin-right: 0.8em;
-          &.green {
-            color: green;
-          }
-          &.yellow {
-            color: yellow;
-          }
-          &.gray {
-            color: gray;
-            font-size: 1.5em;
+        a {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex: 1;
+          color: #888;
+          text-decoration: none;
+          padding: 0.5em;
+          &:hover {
+            background-color: #222;
+            border-top: solid black 2px;
           }
         }
       }
     }
   }
-  .close-btn {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background-color: #444;
-    padding: 0.3em;
-    border: 0;
-    border-radius: 0.1em;
-  }
+}
+
+//UTILITY
+
+.hide {
+  display: none;
 }
