@@ -1,18 +1,14 @@
 console.log("sanity check");
 
-generateWordGridHTML();
-generateOnScreenKeyboard();
-addEventListenersToGuideCont(); //listens for clicks to close '.guide-cont' window
-
-let answer = getAnswer();
-console.log(answer);
-let guess = "";
-let ignoreEnterAndBackspace = false;
-
-const rows = document.querySelectorAll(".grid > .row");
-let rowIndex = 0; //keep track of the row whose characters are being decided
-const keyboard = document.body.querySelector(".keyboard");
+const rows = generateWordGridHTML();
+const keyboard = generateOnScreenKeyboard();
+let rowIndex = 0; //the row whose characters are being decided
 let tiles = getTilesOfRow(rowIndex);
+addEventListenersToModals(); //listens for clicks/change on .guide-cont modal & .settings-cont modal  //uses tiles.length^
+let answer = getAnswer(); //decides length of answer based on tiles.length
+let guess = "";
+// console.log(answer);
+let gameJustEnded = false; //determine enable/disable of enter & backspace, whether changing word-length should refresh page
 
 document.addEventListener("keyup", handleKeyboardsInput);
 
@@ -21,7 +17,7 @@ document.addEventListener("keyup", handleKeyboardsInput);
 //===================================================/
 
 async function onSubmit() {
-  if (guess.length < 5) {
+  if (guess.length < tiles.length) {
     insertToast("Please fill out this row.", rows[rowIndex]);
     return;
   }
@@ -31,14 +27,14 @@ async function onSubmit() {
     return;
   }
 
-  //checkpoint: guess is a valid word!
+  //checkpoint: a valid word was entered!
 
   await colorTilesAndKeys();
 
   const WIN = guess === answer;
 
   if (WIN) {
-    ignoreEnterAndBackspace = true;
+    gameJustEnded = true;
     //on win or lose,
     insertToast("Victory!  Click here to replay!", rows[rowIndex], {
       icon: "😀",
@@ -60,7 +56,7 @@ async function onSubmit() {
 
   const LOSE = rowIndex + 1 === rows.length; //lose if next row does not exist
   if (LOSE) {
-    ignoreEnterAndBackspace = true;
+    gameJustEnded = true;
     insertToast("Game Over!  Click here to retry!", rows[rows.length - 1], {
       icon: "😱",
       timeout: false,
@@ -104,7 +100,7 @@ async function colorTilesAndKeys() {
     return new Promise((resolve) => {
       let tileToColorIndex = 0;
       const colorTilesId = setInterval(() => {
-        if (tileToColorIndex > 4) {
+        if (tileToColorIndex > tiles.length - 1) {
           return resolve(clearInterval(colorTilesId));
         }
         const [tileEl, keyEl, colorClass] = tile_key_color[tileToColorIndex];
@@ -131,16 +127,12 @@ function handleKeyboardsInput(event) {
   //handle input from physical keyboard and from on-screen keyboard
   const input = event.key || event.currentTarget.dataset.value;
 
-  if (input === "Enter" && !ignoreEnterAndBackspace) {
+  if (input === "Enter" && !gameJustEnded) {
     onSubmit();
-  } else if (
-    input === "Backspace" &&
-    guess.length &&
-    !ignoreEnterAndBackspace
-  ) {
+  } else if (input === "Backspace" && guess.length && !gameJustEnded) {
     guess = guess.substring(0, guess.length - 1); //remove last character
     clearLastTile();
-  } else if (isLetter(input) && guess.length < 5) {
+  } else if (isLetter(input) && guess.length < tiles.length) {
     const char = input.toUpperCase();
     guess += char;
     showCharOnTile(char);
@@ -157,11 +149,11 @@ function replay({ won }) {
   tiles = getTilesOfRow(rowIndex); //focus tiles on first row
 
   clearLettersAndColors();
-  ignoreEnterAndBackspace = false;
+  gameJustEnded = false;
 
   if (won) {
     answer = getAnswer(); //choose new word for next game
-    console.log("you just won.  word for next game: ", answer);
+    // console.log("you just won.  word for next game: ", answer);
   }
 
   //------------local functions------------
@@ -236,21 +228,24 @@ function showCurrentRowLoading() {
 }
 
 function getAnswer() {
-  //prettier-ignore
-  const wordBank = ["SNOUT", "LOWLY", "CYNIC", "STRESS", "SHOOK", "FLEET", "TEETH"];
-  //   const wordBank = ["SNOUT", "LOWLY", "CYNIC"];
+  const wordsSpaced =
+    "i a in me if my up ab we go ad you eat car egg odd her wall jaw bad mix shy sun old fix far kid hot bye why spy lie fall fee fine rich gold milk live boss core luck lawn cute done love date face goal hard rain mine real last quiz race head hope hurt earn good fire jump tick lick cold wine seek gaze fear same gray bold fame fist grow grip hair mood team lead cool sour leaf dear moon joke warm slim dark fork yard back fail wild leap flow ring grit feel away stir once time snack drive stale value robot label light tree purse money scare sorry relax alien tired enjoy touch trial first argue sound sight speak logic peace group large yearn cough croak ghost tease clock blink heart frame brave child stare watch spark stoop bleed brain strive strong truth chance final limit alone clear stand fight sweat sweet extra magic laugh stone juice wrong wrath scent crank smile snake horse panic baby branch breeze forest marvel loyal bloom should spirit finger signal strict hungry desire honest wonder never secret wealth pretty compete compare regret appear wither impulse sudden moment second polish prefer vanish filter perfume perfect gender sneeze model anger party fierce actual admit danger gather seduce purpose precious special unique pursue science research restart wallet inspire stumble emotion almost severe scatter ancient mistake fortune fashion increase grateful appreciate whisper alcohol nervous muscle shiver jealous deceive extreme balance obstacle identity stranger mystery handsome temporary butterfly language different waterfall interview individual momentum beautiful justice advantage position";
+
+  let words = wordsSpaced.toUpperCase().split(/ +/); //all words
+  words = words.filter((word) => word.length === tiles.length); //words of a certain length
 
   const pastAnswers = getPastAnswers();
-  if (pastAnswers.length === 0) return getRandom(wordBank);
 
-  const wordBankFiltered = wordBank.filter(
-    (word) => !pastAnswers.includes(word)
-  );
-  if (wordBankFiltered.length === 0) {
-    console.warn("All words have been played! Will reuse old words.");
-    return getRandom(wordBank);
+  const unseenWords = words.filter((word) => !pastAnswers.includes(word)); //get words that haven't already been played
+
+  if (unseenWords.length === 0) {
+    console.warn(
+      `All words of length ${length} have been played! Will reuse old words.`
+    );
+    return getRandom(words);
   }
-  return getRandom(wordBankFiltered);
+
+  return getRandom(unseenWords);
 
   //----------------local functions----------------
   function getRandom(arr) {
@@ -316,17 +311,28 @@ function insertToast(text, refElement, options = {}) {
 }
 
 function generateWordGridHTML() {
-  const grid = document.body.querySelector(".grid");
+  //get number of columns to generate based on url paramater 'length'. Default to 5 columns.
+  const params = new URLSearchParams(window.location.search);
+  const urlLength = parseInt(params.get("length"));
+  const numColumns = isIntegerBetween(urlLength, 1, 10) ? urlLength : 5;
 
+  const grid = document.body.querySelector(".grid");
+  //create rows
   for (let i = 0; i < 6; i++) {
     const row = document.createElement("div");
     row.classList.add("row");
-    for (let i = 0; i < 5; i++) {
+    //create columns (length of word)
+    for (let i = 0; i < numColumns; i++) {
       const tile = document.createElement("div");
       tile.classList.add("tile");
       row.appendChild(tile);
     }
     grid.appendChild(row);
+  }
+  return grid.querySelectorAll(".row");
+  //-------------local functions-----
+  function isIntegerBetween(x, startNum, endNum) {
+    return Number.isInteger(x) && x >= startNum && x <= endNum;
   }
 }
 
@@ -358,24 +364,92 @@ function generateOnScreenKeyboard() {
   //capitalize enter key's textcontent
   const enterKey = keyboard.querySelector("[data-value='Enter']");
   enterKey.textContent = enterKey.textContent.toUpperCase();
+  return keyboard;
 }
 
-function addEventListenersToGuideCont() {
-  const guideCont = document.body.querySelector(".guide-cont");
-  //click 'x' or 'okay' to close guide:
-  const guideContCloseBtns = [
-    guideCont.querySelector(".close-btn"),
-    guideCont.querySelector(".okay-btn"),
-  ];
-  const questionIcon = document.body.querySelector(".question-icon");
-  guideContCloseBtns.forEach(
-    (btn) =>
-      (btn.onclick = () => {
-        guideCont.classList.add("hide");
-      })
-  );
-  //click '?' to see guide:
-  questionIcon.onclick = () => {
-    guideCont.classList.remove("hide");
+function addEventListenersToModals() {
+  //-----------------GUIDE MODAL
+  //click 'i' to see guide:
+  const infoIcon = document.body.querySelector(".info-icon");
+  infoIcon.onclick = () => {
+    unhide(guideCont);
   };
+
+  //click 'x' or 'okay' button to close guide:
+  const guideCont = document.body.querySelector(".guide-cont");
+  guideCont.querySelector(".okay-btn").onclick = () => {
+    hide(guideCont);
+    localStorage.setItem("sawGuide", "1");
+  };
+
+  guideCont.querySelector(".modal-x-btn").onclick = () => {
+    hide(guideCont);
+  };
+
+  //update text to reflect word length
+  guideCont.querySelector(".word-length").textContent = tiles.length;
+
+  //if guide has not been seen, then show guide
+  if (!localStorage.getItem("sawGuide")) unhide(guideCont);
+
+  //-----------------SETTINGS MODAL
+  const gearIcon = document.body.querySelector(".gear-icon");
+  const settingsCont = document.body.querySelector(".settings-cont");
+  const lengthSelect = settingsCont.querySelector(".select-word-length");
+  lengthSelect.value = tiles.length; //update select element to reflect current word-to-guess length
+  const refreshWarning = settingsCont.querySelector(".refresh-warning");
+
+  //click gear-icon to show settings modal
+  gearIcon.onclick = () => {
+    hide(refreshWarning);
+    unhide(settingsCont);
+  };
+
+  //click 'x' or .no-btn or white-bg to hide settings modal
+  settingsCont.onclick = (e) => {};
+  const closeSettingsTriggers = [
+    settingsCont,
+    settingsCont.querySelector(".modal-x-btn"),
+    settingsCont.querySelector(".refresh-warning .no-btn"),
+  ];
+  closeSettingsTriggers.forEach((ele) => {
+    ele.onclick = function (e) {
+      if (ele === settingsCont && e.target !== e.currentTarget) return; //disallow clicks on the modal to close modal
+      hide(settingsCont);
+      lengthSelect.value = tiles.length;
+    };
+  });
+
+  //click .yes-btn in the refresh warning to reload page with new word length
+  refreshWarning.querySelector(".yes-btn").onclick = function () {
+    refresh_updateLength();
+  };
+
+  //listen for 'change' event on .select-word-length
+  lengthSelect.addEventListener("change", onChange_lengthSelect);
+
+  function onChange_lengthSelect(e) {
+    const gameInProgress = rowIndex > 0 && !gameJustEnded;
+    if (gameInProgress) {
+      unhide(refreshWarning);
+      return;
+    }
+    refresh_updateLength();
+  }
+
+  function refresh_updateLength() {
+    window.location.search = `?length=${lengthSelect.value}`;
+  }
+
+  //position settings modal in the middle of the grid
+  settingsCont.querySelector(".settings").style.top =
+    gearIcon.getBoundingClientRect().bottom + 180 + window.scrollY + "px";
+
+  //------------local-functions--------------
+  function unhide(element) {
+    element.classList.remove("hide");
+  }
+  function hide(element) {
+    element.classList.add("hide");
+  }
 }
