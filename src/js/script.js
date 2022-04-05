@@ -329,6 +329,18 @@ function generateWordGridHTML() {
     }
     grid.appendChild(row);
   }
+
+  //if grid width exceeds width of window, then decrease tile size
+  if (grid.getBoundingClientRect().width > window.innerWidth) {
+    const tileSize = window.innerWidth / numColumns;
+    const allTiles = grid.querySelectorAll(".tile");
+    allTiles.forEach((tile) => {
+      tile.style.margin = 0;
+      tile.style.width = tileSize + "px";
+      tile.style.height = tileSize + "px";
+    });
+  }
+
   return grid.querySelectorAll(".row");
   //-------------local functions-----
   function isIntegerBetween(x, startNum, endNum) {
