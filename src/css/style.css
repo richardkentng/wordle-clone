@@ -39,20 +39,21 @@ button:active {
   font-size: 2rem;
   text-align: center;
 }
-.heading-grid-cont .heading .question-icon {
+.heading-grid-cont .heading i {
   margin-left: 10px;
   color: white;
   font-size: 1.8rem;
   display: inline-block;
 }
-.heading-grid-cont .heading .question-icon:hover {
+.heading-grid-cont .heading i:hover {
   filter: brightness(0.8);
 }
-.heading-grid-cont .heading .question-icon:active {
+.heading-grid-cont .heading i:active {
   transform: scale(1.2);
 }
 .heading-grid-cont .grid {
   width: fit-content;
+  margin: 0 auto;
 }
 .heading-grid-cont .grid .row {
   display: flex;
@@ -148,26 +149,78 @@ button:active {
   font-size: 14px;
 }
 
-.guide-cont {
+.guide-cont, .settings-cont {
   position: absolute;
   width: 100%;
   height: 100%;
   background-color: rgba(255, 255, 255, 0.5);
 }
-.guide-cont .guide {
+
+.guide-cont .guide, .settings-cont .settings {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
   background-color: #222;
+  border-radius: 0.5em;
+  border: solid #444 3px;
+  z-index: 2;
+}
+
+.modal-x-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 1em;
+  color: white;
+  background-color: inherit;
+  padding: 0.3em;
+  border: 0;
+  border-radius: 0.1em;
+}
+.modal-x-btn:hover {
+  background-color: #555;
+}
+
+.settings-cont .settings {
+  width: 100%;
+  height: fit-content;
+  max-width: 300px;
+  max-height: 100%;
+  padding: 1.9em;
+}
+.settings-cont .settings .p-select-p-cont {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.settings-cont .settings .p-select-p-cont .select-word-length {
+  margin-left: 10px;
+}
+.settings-cont .settings .refresh-warning {
+  font-family: "Noto Sans", sans-serif;
+  color: #c7c741;
+}
+.settings-cont .settings .refresh-warning .buttons {
+  display: flex;
+  justify-content: space-evenly;
+}
+.settings-cont .settings .refresh-warning .buttons button {
+  width: 50px;
+  padding: 0.4em 1em;
+  border: 0;
+  border-radius: 0.2em;
+}
+.settings-cont .settings .refresh-warning .buttons button.yes-btn {
+  background-color: #f1f14d;
+}
+
+.guide-cont .guide {
   width: 100%;
   height: fit-content;
   max-width: 500px;
   max-height: 100%;
   font-family: "Noto Sans", sans-serif;
-  border-radius: 0.5em;
-  border: solid #444 3px;
-  z-index: 1;
 }
 .guide-cont .guide .content {
   padding: 1.9em;
@@ -210,17 +263,6 @@ button:active {
   border: 0;
   border-radius: 0.2em;
   background-color: #ccc;
-}
-.guide-cont .guide .content .close-btn {
-  position: absolute;
-  right: 0;
-  top: 0;
-  font-size: 1.5em;
-  color: white;
-  background-color: inherit;
-  padding: 0.3em;
-  border: 0;
-  border-radius: 0.1em;
 }
 .guide-cont .guide footer {
   background-color: black;
