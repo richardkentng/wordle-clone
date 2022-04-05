@@ -75,6 +75,13 @@ button {
   }
 }
 
+@media (max-width: 580px) {
+  .grid .row .tile {
+    width: 30px;
+    height: 30px;
+  }
+}
+
 .loading {
   //the loading wheel that appears to the right of a row after pressing enter
   width: 50px;

@@ -69,6 +69,12 @@ button:active {
   margin: 3px;
 }
 
+@media (max-width: 580px) {
+  .grid .row .tile {
+    width: 30px;
+    height: 30px;
+  }
+}
 .loading {
   width: 50px;
   opacity: 0.5;
