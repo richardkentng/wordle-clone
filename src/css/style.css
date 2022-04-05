@@ -57,6 +57,7 @@ button:active {
 }
 .heading-grid-cont .grid .row {
   display: flex;
+  width: fit-content;
 }
 .heading-grid-cont .grid .tile {
   display: flex;
@@ -69,12 +70,6 @@ button:active {
   margin: 3px;
 }
 
-@media (max-width: 580px) {
-  .grid .row .tile {
-    width: 30px;
-    height: 30px;
-  }
-}
 .loading {
   width: 50px;
   opacity: 0.5;

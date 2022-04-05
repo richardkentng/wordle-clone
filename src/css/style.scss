@@ -61,6 +61,7 @@ button {
     margin: 0 auto;
     .row {
       display: flex;
+      width: fit-content;
     }
     .tile {
       display: flex;
@@ -72,13 +73,6 @@ button {
       border: solid #555 1px;
       margin: 3px;
     }
-  }
-}
-
-@media (max-width: 580px) {
-  .grid .row .tile {
-    width: 30px;
-    height: 30px;
   }
 }
 
