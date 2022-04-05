@@ -13,20 +13,49 @@
 <body>
 	<div class="content">
 		<section class="heading-grid-cont">
-				<h1 class="heading">Wordle Clone <i class="bi-question-square question-icon"></i></h1>
+				<h1 class="heading">Wordle Clone <i class="bi-info-circle info-icon"></i><i class="bi-gear gear-icon"></i></h1>
 			<div class="grid"></div>
 		</section>
 		<div class="keyboard"></div>
 	</div>
 
-	<div class="guide-cont">
+	<div class="settings-cont hide">
+		<div class="settings">
+			<div class="p-select-p-cont">
+				<p>Guess a</p> 
+				<select name="length" class="select-word-length">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+				</select>
+				<p>-letter word.</p>
+			</div>
+			<div class="refresh-warning hide">
+				<p>The page needs to refresh to apply these changes.  Your current game progress will be lost.  Continue?</p>
+				<div class="buttons">
+					<button class="no-btn">No</button>
+					<button class="yes-btn">Yes</button>
+				</div>
+			</div>
+			<button class="modal-x-btn"><i class="bi-x-lg"></i></button>
+		</div>
+	</div>
+
+	<div class="guide-cont hide">
 		<div class="guide">
 			<div class="content">
 
 				<div class="text">
 					<p>Welcome to my clone of Wordle!</p>
 					<div class="objective">
-						<p>Your objective is to... <span class="emphasize">guess the 5-letter word!</span></p>
+						<p>Your objective is to... <span class="emphasize">guess the <span class="word-length">5</span>-letter word!</span></p>
 					</div >
 		
 					<p>You have 6 chances to guess the word.</p>
@@ -40,19 +69,19 @@
 				</div>
 
 				<div class="okay-btn-cont"><button class="okay-btn">Okay!</button></div>
-				<button class="close-btn"><i class="bi-x-lg"></i></button>
+				<button class="modal-x-btn"><i class="bi-x-lg"></i></button>
 			</div>
 			<footer>
 				<div class="links">
 					<a
 					href="https://www.linkedin.com/in/richard-kent-ng/"
 					target="_blank"
-					>my linkedin
+					>linkedin
 				  </a>
 					<a
 					href="https://github.com/richardkentng/wordle-clone"
 					target="_blank"
-					>view code
+					>github
 				  </a>
 				</div>
 			</footer>
