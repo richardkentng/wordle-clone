@@ -18,6 +18,7 @@ This is the fault of the dictionary API. I should switch to use a different API 
 
 # Next Steps?
 
+- refactor code for modals to avoid repetition
 - Fix styling so that keyboard is closer to the grid
 - Use a different, more accurate dictionary API (which checks for valid words)
 - Enable players to create a custom word for a game, and then send the link to their friends!
