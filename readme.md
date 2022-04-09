@@ -22,4 +22,5 @@ This is the fault of the dictionary API. I should switch to use a different API 
 - Fix styling so that keyboard is closer to the grid
 - Use a different, more accurate dictionary API (which checks for valid words)
 - Enable players to create a custom word for a game, and then send the link to their friends!
+  - When playing a custom game, show a message: You are guessing someone's wordle!
 - Grab answer-words from an API (answers are currently hard coded)
