@@ -25,3 +25,6 @@ This is the fault of the dictionary API. I should switch to use a different API 
   - When playing a custom game, show a message: You are guessing someone's wordle!
 - Grab answer-words from an API (answers are currently hard coded)
 - provide hints
+- prevent pressing enter multiple times during tile-reveal animation from losing early before all rows have been entered
+- press enter again to speed thru tile-reveal animation
+- create a new modal button to show stats
