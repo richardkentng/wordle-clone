@@ -1,28 +1,38 @@
 console.log("sanity check");
 
-const rows = generateWordGridHTML();
-const keyboard = generateOnScreenKeyboard();
-let rowIndex = 0; //the row whose characters are being decided
-let tiles = getTilesOfRow(rowIndex);
-addEventListenersToModals(); //listens for clicks/change on .guide-cont modal & .settings-cont modal  //uses tiles.length^
-let answer = getAnswer(); //decides length of answer based on tiles.length
+let customWordle = null;
+let rows = null;
+let keyboard = null;
+let rowIndex = 0; //the index of the row whose characters are being decided
+let tiles = null; //the tiles of that row^
+let answer = null;
 let guess = "";
-// console.log(answer);
-let gameJustEnded = false; //determine enable/disable of enter & backspace, whether changing word-length should refresh page
 
-document.addEventListener("keyup", handleKeyboardsInput);
+//the variables below when true, will disable keyboard input
+let gameJustEnded = false; //if true, then the user just won/lost but has not started a new game. Used to help decide if game is in progress
+let modalActive = false;
+let tilesColoring = false;
+
+let metaKeyDown = false; //for development purposes
+
+setup();
+
+async function setup() {
+  rows = await generateWordGridHTML();
+  keyboard = generateOnScreenKeyboard();
+  tiles = getTilesOfRow(rowIndex);
+  addEventListenersToModals(); //listens for clicks/change on .guide-cont modal & .settings-cont modal  //uses tiles.length^
+  answer = getAnswer(); //decides length of answer based on tiles.length
+  document.addEventListener("keyup", handleKeyboardsInput); //uses tilesjk
+  addEventListenersForMetaKey();
+}
 
 //===================================================/
 //--------------------- FUNCTIONS -------------------/
 //===================================================/
 
-async function onSubmit() {
-  if (guess.length < tiles.length) {
-    insertToast("Please fill out this row.", rows[rowIndex]);
-    return;
-  }
-
-  if ((await isValidWord(guess)) === false) {
+async function onSubmit_guess() {
+  if ((await isValidWord(guess, true)) === false) {
     insertToast("That's not a valid word.", rows[rowIndex]);
     return;
   }
@@ -69,13 +79,14 @@ async function onSubmit() {
     return;
   }
 
-  //if game is ongoing:
+  //since game is ongoing:
   guess = ""; //reset guess
   rowIndex++; //'focus' next row
   tiles = getTilesOfRow(rowIndex); //update tiles
 }
 
 async function colorTilesAndKeys() {
+  tilesColoring = true;
   //*** store tileEl,keyEl, and their respective color, in 'tile_key_color'
   const tile_key_color = [];
   //^ eg: [div.tile, button.key, "bg-color-green", etc]
@@ -94,6 +105,7 @@ async function colorTilesAndKeys() {
 
   await colorTiles(tile_key_color);
   colorKeys(tile_key_color);
+  tilesColoring = false;
 
   //-------------local functions------------
   function colorTiles() {
@@ -124,14 +136,20 @@ async function colorTilesAndKeys() {
 }
 
 function handleKeyboardsInput(event) {
+  if (modalActive || tilesColoring || gameJustEnded) return;
   //handle input from physical keyboard and from on-screen keyboard
   const input = event.key || event.currentTarget.dataset.value;
 
-  if (input === "Enter" && !gameJustEnded) {
-    onSubmit();
-  } else if (input === "Backspace" && guess.length && !gameJustEnded) {
+  if (input === "Enter") {
+    if (guess.length < tiles.length) {
+      insertToast("Please fill out this row.", rows[rowIndex]);
+      return;
+    }
+    onSubmit_guess();
+  } else if (input === "Backspace" && guess.length) {
     guess = guess.substring(0, guess.length - 1); //remove last character
     clearLastTile();
+    //if input is a letter and there are empty tiles on the current row:
   } else if (isLetter(input) && guess.length < tiles.length) {
     const char = input.toUpperCase();
     guess += char;
@@ -152,8 +170,8 @@ function replay({ won }) {
   gameJustEnded = false;
 
   if (won) {
+    if (customWordle) return (window.location.search = ""); //load a normal game by clearing 'word' paramater
     answer = getAnswer(); //choose new word for next game
-    // console.log("you just won.  word for next game: ", answer);
   }
 
   //------------local functions------------
@@ -196,13 +214,18 @@ function getTilesOfRow(rowIndex) {
   return rows[rowIndex].querySelectorAll(".tile");
 }
 
-async function isValidWord(word) {
-  const loadingEl = showCurrentRowLoading();
+async function isValidWord(word, showLoadingEl) {
+  //address valid words that the api mistakenly considers invalid
+  const someValidWords = ["TOUCH"];
+  if (someValidWords.includes(word)) return true;
+
+  let loadingEl = null;
+  if (showLoadingEl) loadingEl = showCurrentRowLoading();
   const resRaw = await fetch(
     `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
   );
   const res = await resRaw.json();
-  loadingEl.remove();
+  if (showLoadingEl) loadingEl.remove();
 
   if (res.title === "No Definitions Found") return false;
   return true;
@@ -228,6 +251,8 @@ function showCurrentRowLoading() {
 }
 
 function getAnswer() {
+  if (customWordle) return customWordle;
+
   const wordsSpaced =
     "i a in me if my up ab we go ad you eat car egg odd her wall jaw bad mix shy sun old fix far kid hot bye why spy lie fall fee fine rich gold milk live boss core luck lawn cute done love date face goal hard rain mine real last quiz race head hope hurt earn good fire jump tick lick cold wine seek gaze fear same gray bold fame fist grow grip hair mood team lead cool sour leaf dear moon joke warm slim dark fork yard back fail wild leap flow ring grit feel away stir once time snack drive stale value robot label light tree purse money scare sorry relax alien tired enjoy touch trial first argue sound sight speak logic peace group large yearn cough croak ghost tease clock blink heart frame brave child stare watch spark stoop bleed brain strive strong truth chance final limit alone clear stand fight sweat sweet extra magic laugh stone juice wrong wrath scent crank smile snake horse panic baby branch breeze forest marvel loyal bloom should spirit finger signal strict hungry desire honest wonder never secret wealth pretty compete compare regret appear wither impulse sudden moment second polish prefer vanish filter perfume perfect gender sneeze model anger party fierce actual admit danger gather seduce purpose precious special unique pursue science research restart wallet inspire stumble emotion almost severe scatter ancient mistake fortune fashion increase grateful appreciate whisper alcohol nervous muscle shiver jealous deceive extreme balance obstacle identity stranger mystery handsome temporary butterfly language different waterfall interview individual momentum beautiful justice advantage position";
 
@@ -240,7 +265,7 @@ function getAnswer() {
 
   if (unseenWords.length === 0) {
     console.warn(
-      `All words of length ${length} have been played! Will reuse old words.`
+      `All words of length ${tiles.length} have been played! Will reuse old words.`
     );
     return getRandom(words);
   }
@@ -255,6 +280,13 @@ function getAnswer() {
 
 function getPastAnswers() {
   return JSON.parse(localStorage.getItem("pastAnswers")) || [];
+}
+
+function unhide(element) {
+  element.classList.remove("hide");
+}
+function hide(element) {
+  element.classList.add("hide");
 }
 
 function animateJump(element, px = "-10px", sec = "0.1s") {
@@ -272,6 +304,8 @@ function insertToast(text, refElement, options = {}) {
     icon: "bi-exclamation-square-fill",
     onclick: function () {},
     timeout: 3000,
+    align: "left",
+    zIndex: "",
   };
   //merge defaultOptions and options (when the keys are the same, options has priority)
   options = Object.assign(defaultOptions, options);
@@ -292,10 +326,27 @@ function insertToast(text, refElement, options = {}) {
       </div>`;
   document.body.insertAdjacentHTML("beforeend", toastStr);
   const toast = document.body.lastChild;
+  toast.classList.add("opacity0");
+  toast.style.zIndex = options.zIndex;
+  setTimeout(() => {
+    //set timeout is required for the following class removal to trigger fade-in animation
+    toast.classList.remove("opacity0");
+  }, 0);
+
   //position based on refElement:
-  const { x: refX, bottom: refBottom } = refElement.getBoundingClientRect();
-  toast.style.left = refX + window.scrollX + "px";
+  const {
+    x: refX,
+    bottom: refBottom,
+    right: refRight,
+  } = refElement.getBoundingClientRect();
+
   toast.style.top = refBottom + window.scrollY - 8 + "px"; //subtract 8 to adjust for the whitespace around arrow
+
+  if (options.align === "left") {
+    toast.style.left = refX + window.scrollX + "px";
+  } else if (options.align === "right") {
+    toast.style.right = window.innerWidth - refRight + window.scrollX + "px";
+  }
   //click to remove
   toast.onclick = function () {
     options.onclick();
@@ -303,18 +354,35 @@ function insertToast(text, refElement, options = {}) {
   };
 
   if (Number.isInteger(options.timeout)) {
-    //   remove toast (after timeout delay)
+    if (options.timeout < 1000) {
+      console.warn(
+        "Toast duration should at least by 1000ms. (500ms for fade in and an additional 500ms for fade out)"
+      );
+    }
     setTimeout(() => {
-      toast.remove();
-    }, options.timeout);
+      toast.classList.add("opacity0");
+      setTimeout(() => {
+        toast.remove();
+      }, 500);
+    }, options.timeout - 500); //fade-out starts 500ms before toast is removed
   }
 }
 
-function generateWordGridHTML() {
-  //get number of columns to generate based on url paramater 'length'. Default to 5 columns.
+async function generateWordGridHTML() {
+  //get number of columns to generate (default is 5),
+  //    but can be overwritten by url parameters 'word' and 'length'
   const params = new URLSearchParams(window.location.search);
-  const urlLength = parseInt(params.get("length"));
-  const numColumns = isIntegerBetween(urlLength, 1, 10) ? urlLength : 5;
+  const paramsLength = parseInt(params.get("length"));
+  const paramsCustomWordle = decodeWord(params.get("word"));
+
+  let numColumns = 5;
+  if (paramsCustomWordle && (await isValidWord(paramsCustomWordle)) === true) {
+    unhide(document.body.querySelector(".custom-wordle-msg"));
+    numColumns = paramsCustomWordle.length;
+    customWordle = paramsCustomWordle;
+  } else if (isIntegerBetween(paramsLength, 1, 10)) {
+    numColumns = paramsLength;
+  }
 
   const grid = document.body.querySelector(".grid");
   //create rows
@@ -348,6 +416,44 @@ function generateWordGridHTML() {
   }
 }
 
+function encodeWord(str) {
+  //eg. converts 'apple' to '268l328l328l312l284l486' (if the same string is fed in multiple times, you will almost certainly get a different output everytime)
+  const multiblyBy = getRandInt();
+  const addBy = getRandInt();
+  const numbers = str
+    .toUpperCase()
+    .split("")
+    .map((c) => getLetterToNumObj()[c] * multiblyBy + addBy);
+
+  numbers.push(`${multiblyBy}${addBy}${getRandInt()}`);
+  return numbers.join("l");
+  //----- local function-----
+  function getRandInt() {
+    return Math.floor(Math.random() * 8 + 2); //random integer between 2 and 9
+  }
+}
+function decodeWord(str) {
+  //eg. converts '268l328l328l312l284l486' to 'APPLE'
+  if (str == null) return false;
+  const encodedNums = str.split("l");
+  if (encodedNums.length < 2) return false;
+
+  const key = encodedNums.pop();
+  if (!key.match(/^[2-9]{3}$/)) return false;
+  const divideBy = parseInt(key[0]);
+  const subtractBy = parseInt(key[1]);
+
+  let customWord = "";
+  for (let i = 0; i < encodedNums.length; i++) {
+    const encodedNum = parseInt(encodedNums[i]);
+    const decodedNum = (encodedNum - subtractBy) / divideBy;
+    const letter = getNumToLetterObj()[decodedNum];
+    if (letter == null) return false;
+    customWord += letter;
+  }
+  return customWord;
+}
+
 function generateOnScreenKeyboard() {
   const keyboard = document.body.querySelector(".keyboard");
   const keyRows = [
@@ -369,6 +475,7 @@ function generateOnScreenKeyboard() {
       row.appendChild(key);
     });
     keyboard.appendChild(row);
+    return keyboard;
   });
   //replace backspace key's textcontent with backspace icon
   const backspaceKey = keyboard.querySelector("[data-value='Backspace']");
@@ -379,66 +486,153 @@ function generateOnScreenKeyboard() {
   return keyboard;
 }
 
+function addEventListenersForMetaKey() {
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Meta") metaKeyDown = true;
+  });
+  document.addEventListener("keyup", (e) => {
+    if (e.key === "Meta") metaKeyDown = false;
+  });
+}
+
 function addEventListenersToModals() {
+  // ----------------- CUSTOM WORDLE MODAL
+
+  const customWordleIcon = document.body.querySelector(".custom-wordle-icon");
+  const customWordleCont = document.body.querySelector(".custom-wordle-cont");
+  const wordInput = customWordleCont.querySelector("#custom-wordle");
+
+  // click .custom-wordle-icon to see customWordleCont
+  customWordleIcon.onclick = function () {
+    unhideModal(customWordleCont);
+    setTimeout(() => {
+      wordInput.focus();
+    });
+  };
+
+  //click white-bg or x to hide customWordleCont
+  [customWordleCont, customWordleCont.querySelector(".modal-x-btn")].forEach(
+    (ele) =>
+      ele.addEventListener("click", (e) => {
+        if (ele === customWordleCont && e.target !== e.currentTarget) return; //disallow clicks on the modal to close modal
+        hideModal(customWordleCont);
+      })
+  );
+
+  const nextStepsCont = customWordleCont.querySelector(
+    ".after-generate-link-cont"
+  );
+
+  wordInput.addEventListener("input", function () {
+    this.value = this.value.replace(/[^a-zA-Z]/g, ""); //only allow letters in custom word
+    hide(nextStepsCont);
+  });
+
+  const customWordleForm = customWordleCont.querySelector("form");
+  const linkEl = customWordleCont.querySelector("#custom-wordle-link");
+
+  customWordleForm.addEventListener("submit", onSubmit_customWord);
+
+  async function onSubmit_customWord(e) {
+    e.preventDefault();
+
+    //ensure the guess is valid english
+    if ((await isValidWord(wordInput.value)) === false) {
+      insertToast("That's not a valid word.", wordInput, {
+        zIndex: 3,
+      });
+      return;
+    }
+    //populate link
+    const { origin, pathname } = window.location;
+
+    const encodedWord = encodeWord(wordInput.value);
+    linkEl.value = `${origin}${pathname}?word=${encodedWord}`;
+
+    unhide(nextStepsCont);
+  }
+
+  const copyBtn = customWordleCont.querySelector(".copy-btn");
+  const testGameBtn = document.body.querySelector(".test-custom-wordle-btn");
+
+  copyBtn.addEventListener("click", async function () {
+    if (linkEl.value === "") return;
+    await navigator.clipboard.writeText(linkEl.value);
+    insertToast("Copied to clipboard!", copyBtn, {
+      icon: "✅",
+      align: "right",
+      zIndex: 3,
+    });
+    if (metaKeyDown) window.location = linkEl.value;
+  });
+
+  testGameBtn.addEventListener("click", () => {
+    if (linkEl.value === "") return;
+    if (metaKeyDown) {
+      window.location = linkEl.value; //overwrite current page
+      return;
+    }
+    window.open(linkEl.value, "blank"); //open in new tab
+  });
+
   //-----------------GUIDE MODAL
   //click 'i' to see guide:
   const infoIcon = document.body.querySelector(".info-icon");
   infoIcon.onclick = () => {
-    unhide(guideCont);
+    unhideModal(guideCont);
   };
-
   //click 'x' or 'okay' button to close guide:
   const guideCont = document.body.querySelector(".guide-cont");
+  guideCont.querySelector(".modal-x-btn").onclick = () => {
+    hideModal(guideCont);
+  };
   guideCont.querySelector(".okay-btn").onclick = () => {
-    hide(guideCont);
+    hideModal(guideCont);
     localStorage.setItem("sawGuide", "1");
   };
-
-  guideCont.querySelector(".modal-x-btn").onclick = () => {
-    hide(guideCont);
-  };
+  // visual:
 
   //update text to reflect word length
   guideCont.querySelector(".word-length").textContent = tiles.length;
-
   //if guide has not been seen, then show guide
-  if (!localStorage.getItem("sawGuide")) unhide(guideCont);
+  if (!localStorage.getItem("sawGuide")) {
+    unhideModal(guideCont);
+  }
 
   //-----------------SETTINGS MODAL
   const gearIcon = document.body.querySelector(".gear-icon");
   const settingsCont = document.body.querySelector(".settings-cont");
+  const refreshWarning = settingsCont.querySelector(".refresh-warning");
   const lengthSelect = settingsCont.querySelector(".select-word-length");
   lengthSelect.value = tiles.length; //update select element to reflect current word-to-guess length
-  const refreshWarning = settingsCont.querySelector(".refresh-warning");
 
-  //click gear-icon to show settings modal
+  //click gear-icon to show settings modal, hide refresh warning
   gearIcon.onclick = () => {
+    unhideModal(settingsCont);
     hide(refreshWarning);
-    unhide(settingsCont);
   };
 
-  //click 'x' or .no-btn or white-bg to hide settings modal
-  settingsCont.onclick = (e) => {};
+  //click white-bg or 'x' or .no-btn to hide settings modal, ensure consistency of lengthSelect value
   const closeSettingsTriggers = [
     settingsCont,
     settingsCont.querySelector(".modal-x-btn"),
     settingsCont.querySelector(".refresh-warning .no-btn"),
   ];
   closeSettingsTriggers.forEach((ele) => {
-    ele.onclick = function (e) {
+    ele.addEventListener("click", (e) => {
       if (ele === settingsCont && e.target !== e.currentTarget) return; //disallow clicks on the modal to close modal
-      hide(settingsCont);
+      hideModal(settingsCont);
       lengthSelect.value = tiles.length;
-    };
+    });
   });
 
-  //click .yes-btn in the refresh warning to reload page with new word length
-  refreshWarning.querySelector(".yes-btn").onclick = function () {
-    refresh_updateLength();
-  };
-
-  //listen for 'change' event on .select-word-length
+  //listen for 'change' event on .select-word-length. Potentially show refreshWarning
   lengthSelect.addEventListener("change", onChange_lengthSelect);
+
+  //click .yes-btn in the refresh warning to reload page with new word length
+  refreshWarning.querySelector(".yes-btn").addEventListener("click", () => {
+    refresh_updateLength();
+  });
 
   function onChange_lengthSelect(e) {
     const gameInProgress = rowIndex > 0 && !gameJustEnded;
@@ -452,16 +646,77 @@ function addEventListenersToModals() {
   function refresh_updateLength() {
     window.location.search = `?length=${lengthSelect.value}`;
   }
-
-  //position settings modal in the middle of the grid
-  settingsCont.querySelector(".settings").style.top =
-    gearIcon.getBoundingClientRect().bottom + 180 + window.scrollY + "px";
-
   //------------local-functions--------------
-  function unhide(element) {
-    element.classList.remove("hide");
+  function hideModal(element) {
+    hide(element);
+    modalActive = false;
   }
-  function hide(element) {
-    element.classList.add("hide");
+  function unhideModal(element) {
+    unhide(element);
+    modalActive = true;
   }
+}
+
+function getNumToLetterObj() {
+  const num_letter = {
+    65: "A",
+    66: "B",
+    67: "C",
+    68: "D",
+    69: "E",
+    70: "F",
+    71: "G",
+    72: "H",
+    73: "I",
+    74: "J",
+    75: "K",
+    76: "L",
+    77: "M",
+    78: "N",
+    79: "O",
+    80: "P",
+    81: "Q",
+    82: "R",
+    83: "S",
+    84: "T",
+    85: "U",
+    86: "V",
+    87: "W",
+    88: "X",
+    89: "Y",
+    90: "Z",
+  };
+  return num_letter;
+}
+
+function getLetterToNumObj() {
+  const letter_num = {
+    A: 65,
+    B: 66,
+    C: 67,
+    D: 68,
+    E: 69,
+    F: 70,
+    G: 71,
+    H: 72,
+    I: 73,
+    J: 74,
+    K: 75,
+    L: 76,
+    M: 77,
+    N: 78,
+    O: 79,
+    P: 80,
+    Q: 81,
+    R: 82,
+    S: 83,
+    T: 84,
+    U: 85,
+    V: 86,
+    W: 87,
+    X: 88,
+    Y: 89,
+    Z: 90,
+  };
+  return letter_num;
 }

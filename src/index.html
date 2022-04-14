@@ -1,91 +1,155 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="./css/style.css"></link>
-	<!-- bootstrap icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-	<script src="./js/script.js" defer></script>
-	<title>Wordle Clone</title>
-</head>
-<body>
-	<div class="content">
-		<section class="heading-grid-cont">
-				<h1 class="heading">Wordle Clone <i class="bi-info-circle info-icon"></i><i class="bi-gear gear-icon"></i></h1>
-			<div class="grid"></div>
-		</section>
-		<div class="keyboard"></div>
-	</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- bootstrap icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/script.js" defer></script>
+    <title>Wordle Clone</title>
+  </head>
+  <body>
+    <div class="content">
+      <section class="heading-grid-cont">
+        <h1 class="heading">
+          Wordle Clone <i class="bi-info-circle info-icon"></i
+          ><i class="bi-gear gear-icon"></i
+          ><img
+            class="custom-wordle-icon"
+            src="./images/custom-wordle-icon.png"
+            alt="letter w and pencil"
+          />
+        </h1>
+        <p class="custom-wordle-msg hide">You are guessing a custom wordle.</p>
+        <div class="grid"></div>
+      </section>
+      <div class="keyboard"></div>
+    </div>
 
-	<div class="settings-cont hide">
-		<div class="settings">
-			<div class="p-select-p-cont">
-				<p>Guess a</p> 
-				<select name="length" class="select-word-length">
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-					<option value="8">8</option>
-					<option value="9">9</option>
-					<option value="10">10</option>
-				</select>
-				<p>-letter word.</p>
-			</div>
-			<div class="refresh-warning hide">
-				<p>The page needs to refresh to apply these changes.  Your current game progress will be lost.  Continue?</p>
-				<div class="buttons">
-					<button class="no-btn">No</button>
-					<button class="yes-btn">Yes</button>
-				</div>
-			</div>
-			<button class="modal-x-btn"><i class="bi-x-lg"></i></button>
-		</div>
-	</div>
+    <div class="custom-wordle-cont modal-white-bg hide">
+      <div class="custom-wordle modal">
+        <h2>Create a Custom Wordle Game!</h2>
+        <p>Just enter a word, generate the link, and share it with a friend!</p>
+        <div class="label-input-btn-cont">
+          <label for="custom-wordle">Your Word:</label>
+          <form>
+            <input type="text" id="custom-wordle" required />
+            <button type="submit" class="generate-link-btn">
+              Generate&nbsp;Link
+            </button>
+          </form>
+        </div>
+        <div class="after-generate-link-cont hide">
+          <div class="label-input-btn-cont">
+            <label for="custom-wordle-link">Link:</label>
+            <div class="input-btn-cont">
+              <input type="text" id="custom-wordle-link" disabled />
+              <button class="copy-btn">Copy&nbsp;Link</button>
+            </div>
+          </div>
+          <button class="test-custom-wordle-btn hide">Test Custom Game</button>
+        </div>
+        <button class="modal-x-btn"><i class="bi-x-lg"></i></button>
+      </div>
+    </div>
 
-	<div class="guide-cont hide">
-		<div class="guide">
-			<div class="content">
+    <div class="settings-cont modal-white-bg hide">
+      <div class="settings modal">
+        <h2>Settings</h2>
+        <div class="p-select-p-cont">
+          <p>Guess a</p>
+          <select name="length" class="select-word-length">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+          <p>-letter word.</p>
+        </div>
+        <div class="refresh-warning hide">
+          <p>
+            The page needs to refresh to apply these changes. Your current game
+            progress will be lost. Continue?
+          </p>
+          <div class="buttons">
+            <button class="no-btn">No</button>
+            <button class="yes-btn">Yes</button>
+          </div>
+        </div>
+        <button class="modal-x-btn"><i class="bi-x-lg"></i></button>
+      </div>
+    </div>
 
-				<div class="text">
-					<p>Welcome to my clone of Wordle!</p>
-					<div class="objective">
-						<p>Your objective is to... <span class="emphasize">guess the <span class="word-length">5</span>-letter word!</span></p>
-					</div >
-		
-					<p>You have 6 chances to guess the word.</p>
-			
-					<p>Each time you enter a word, <br>the tiles will change to one of three colors:</p>
-					<div class="explain-colors-cont">
-						<div><span class="color-word gray">GRAY</span><p>The letter is not in the word!</p></div>
-						<div><span class="color-word yellow">YELLOW</span><p> The letter is in the word, but not in that spot!</p></div>
-						<div><span class="color-word green">GREEN</span><p> The letter is in the word and in the correct spot!</p></div>
-					</div>
-				</div>
+    <div class="guide-cont modal-white-bg hide">
+      <div class="guide modal">
+        <div class="content">
+          <h2>Intructions</h2>
 
-				<div class="okay-btn-cont"><button class="okay-btn">Okay!</button></div>
-				<button class="modal-x-btn"><i class="bi-x-lg"></i></button>
-			</div>
-			<footer>
-				<div class="links">
-					<a
-					href="https://www.linkedin.com/in/richard-kent-ng/"
-					target="_blank"
-					>linkedin
-				  </a>
-					<a
-					href="https://github.com/richardkentng/wordle-clone"
-					target="_blank"
-					>github
-				  </a>
-				</div>
-			</footer>
-		</div>
-	</div>
-</body>
+          <div class="text">
+            <p>Welcome to my clone of Wordle!</p>
+            <div class="objective">
+              <p>
+                Your objective is to...
+                <span class="emphasize"
+                  >guess the <span class="word-length">5</span>-letter
+                  word!</span
+                >
+              </p>
+            </div>
+
+            <p>You have 6 chances to guess the word.</p>
+
+            <p>
+              Each time you enter a word, <br />the tiles will change to one of
+              three colors:
+            </p>
+            <div class="explain-colors-cont">
+              <div>
+                <span class="color-word gray">GRAY</span>
+                <p>The letter is not in the word!</p>
+              </div>
+              <div>
+                <span class="color-word yellow">YELLOW</span>
+                <p>The letter is in the word, but not in that spot!</p>
+              </div>
+              <div>
+                <span class="color-word green">GREEN</span>
+                <p>The letter is in the word and in the correct spot!</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="okay-btn-cont">
+            <button class="okay-btn">Okay!</button>
+          </div>
+          <button class="modal-x-btn"><i class="bi-x-lg"></i></button>
+        </div>
+        <footer>
+          <div class="links">
+            <a
+              href="https://www.linkedin.com/in/richard-kent-ng/"
+              target="_blank"
+              >linkedin
+            </a>
+            <a
+              href="https://github.com/richardkentng/wordle-clone"
+              target="_blank"
+              >github
+            </a>
+          </div>
+        </footer>
+      </div>
+    </div>
+  </body>
 </html>
