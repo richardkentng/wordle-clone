@@ -18,6 +18,8 @@ This is the fault of the dictionary API. I should switch to use a different API 
 
 # Next Steps?
 
+- update readme! show off new features. show progress
+- address unused hidden buttons and metaKey related conditionals, in regards to the custom wordle modal
 - make my links more visible
 - shorter class names: eg use the class name 'modal-cont' in place of 'modal-white-bg;
 - replace error messages with cute animated emojis. eg when an invalid word is entered, show an (animated?) emojo of a blue ghost
