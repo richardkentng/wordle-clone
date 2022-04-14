@@ -18,6 +18,9 @@ This is the fault of the dictionary API. I should switch to use a different API 
 
 # Next Steps?
 
+- make my links more visible
+- shorter class names: eg use the class name 'modal-cont' in place of 'modal-white-bg;
+- replace error messages with cute animated emojis. eg when an invalid word is entered, show an (animated?) emojo of a blue ghost
 - refactor code for modals to avoid repetition
 - Fix styling so that keyboard is closer to the grid
 - Use a different, more accurate dictionary API (which checks for valid words)
