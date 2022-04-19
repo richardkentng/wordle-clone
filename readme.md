@@ -104,7 +104,7 @@ function decodeWord(str) {
 
 # Bugs
 
-## Innaccurate Dictionary API
+## Inaccurate Dictionary API
 
 ![invalid word](./github-images/bug-not-a-valid-word.png)
 
