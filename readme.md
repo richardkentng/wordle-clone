@@ -127,10 +127,9 @@ The API lists erroraneously determines some valid words as invalid and some inva
 - shorter class names: eg use the class name 'modal-cont' in place of 'modal-white-bg;
 - replace error messages with cute animated emojis. eg when an invalid word is entered, show an (animated?) emojo of a blue ghost
 - refactor code for modals to avoid repetition
-- Fix styling so that keyboard is closer to the grid
-- Enable players to create a custom word for a game, and then send the link to their friends!
-  - When playing a custom game, show a message: You are guessing someone's wordle!
 - Grab answer-words from an API (answers are currently hard coded)
-- prevent pressing enter multiple times during tile-reveal animation from losing early before all rows have been entered
-- press enter again to speed thru tile-reveal animation
 - create a new modal button to show stats
+- ~Enable players to create a custom word for a game, and then send the link to their friends!~
+  - ~When playing a custom game, show a message: You are guessing someone's wordle!~
+- ~prevent pressing enter multiple times during tile-reveal animation from losing early before all rows have been entered~
+- ~Fix styling so that keyboard is closer to the grid~
